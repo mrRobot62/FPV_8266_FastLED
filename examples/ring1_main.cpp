@@ -29,7 +29,7 @@ using namespace ace_button;
 #define BRIGHTNESS  50
 #define LED_TYPE    WS2812B
 #define COLOR_ORDER GRB
-#define NUM_PATTERNS 5
+#define NUM_PATTERNS 4
 
 #define POT_MIN 5
 #define POT_MAX 40
@@ -54,7 +54,6 @@ void runPattern(uint8_t pattern, CRGB *LEDArray);
 void rainbowBeat(CRGB *LEDarray);
 void redWhiteBlue(CRGB *LEDarray);
 void runFire(CRGB *LEDarray, uint8_t side);
-void doubleFire(CRGB *LEDarray);
 
 void handleEvent(AceButton*, uint8_t, uint8_t);
 
@@ -157,10 +156,6 @@ void runPattern(uint8_t pattern, CRGB *LEDArray) {
     case 3:
       runFire(LEDArray, 0);
       break;
-    case 4:
-      doubleFire(LEDArray);
-      break;
-
 /*
     case 4:
       //runFire(LEDArray, 1);
@@ -283,28 +278,3 @@ void runFire(CRGB *LEDarray, uint8_t side) {
   }  
 } 
 
-void doubleFire(CRGB *LEDarray) {
-  int  a = millis();
-  int start, end, mid;
-  start = 0;
-  mid = NUM_LEDS / 2+1;
-  end = NUM_LEDS ;  
-
-  for (int i = start ; i < mid; i++) {
-    uint8_t noise, math, index;
-    /* left */
-    noise = inoise8 (0 , i * 60 + a , a / 3);
-    math = abs8(i - (mid-1)) * 255 / (mid-1);
-    index = qsub8 (noise, math);
-    LEDarray[i] = ColorFromPalette (firePalette, index, 255);   
-    //_PP("L:"); _PP(i); _PP("; Idx:"); _PP(index);
-    /* right */
-    uint8_t r = NUM_LEDS - i;
-    noise = inoise8 (0 , i * 60 + a , a / 3);
-    math = abs8(i - (mid-1)) * 255 / (mid-1);
-    index = qsub8 (noise, math);
-    LEDarray[r] = ColorFromPalette (firePalette, index, 255);    
-    //_PP("\tR:"); _PP(r); _PP("; Idx:"); _PP(index);
-    //_PL();
-  }
-}
